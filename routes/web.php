@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\ProductController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,13 +17,11 @@ use App\Http\Controllers\Admin\ProductController;
 Route::get('/', function () {
     return view('welcome');
 });
-/*
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
 
-require __DIR__.'/auth.php';
-*/
+//Auth::routes();
+
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 Route::prefix('user')->name('user.')->group(function(){
     Route::middleware(['guest', 'PreventBackHistory'])->group(function(){
         Route::view('/login', 'dashboard.user.login')->name('login');
@@ -49,7 +45,6 @@ Route::prefix('admin')->name('admin.')->group(function(){
     Route::middleware(['auth:admin', 'PreventBackHistory'])->group(function(){
         Route::view('/home', 'dashboard.admin.home')->name('home');
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
-        Route::resource('products', ProductController::class);
 
     });
 });
