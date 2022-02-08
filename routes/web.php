@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\CartController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,7 +35,15 @@ Route::prefix('user')->name('user.')->group(function(){
     });
 
     Route::middleware(['auth', 'PreventBackHistory'])->group(function(){
-        Route::view('/home', 'dashboard.user.home')->name('home');
+        Route::get('/home', function(){
+            $products = Product::all();
+            return view('dashboard.user.home', compact('products'));
+        })->name('home');
+        Route::get('addToCart/{product}', [CartController::class, 'addToCart'])->name('cart.add');
+        Route::get('showMyCart', [CartController::class, 'showMyCart'])->name('cart.show');
+        Route::delete('removeFromCart/{product}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+        Route::put('updateMyCart/{product}', [CartController::class, 'updateMyCart'])->name('cart.update');
+        Route::delete('emptyMyCart', [CartController::class, 'emptyMyCart'])->name('cart.empty');
         Route::post('/logout', [UserController::class, 'logout'])->name('logout');
     });
 });
